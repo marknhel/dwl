@@ -1,0 +1,25 @@
+From ef3e27033f738f08f4f6fc3d054174d82a0e9720 Mon Sep 17 00:00:00 2001
+From: Jacob Tilger <jacob.2015@tilger.net>
+Date: Sun, 5 Feb 2023 15:33:35 +0100
+Subject: [PATCH] prevent focus on mouseover
+
+---
+ dwl.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/dwl.c b/dwl.c
+index 19bb6ce3..7cad8d57 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -1753,8 +1753,9 @@ pointerfocus(Client *c, struct wlr_surface *surface, double sx, double sy,
+ 	struct timespec now;
+ 	int internal_call = !time;
+ 
+-	if (sloppyfocus && !internal_call && c && !client_is_unmanaged(c))
+-		focusclient(c, 0);
++/* commented out, to prevent focus-change on mouseover */
++/*	if (sloppyfocus && !internal_call && c && !client_is_unmanaged(c))
++		focusclient(c, 0);*/
+ 
+ 	/* If surface is NULL, clear pointer focus */
+ 	if (!surface) {

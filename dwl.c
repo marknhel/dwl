@@ -2113,8 +2113,9 @@ pointerfocus(Client *c, struct wlr_surface *surface, double sx, double sy,
 	struct timespec now;
 	int internal_call = !time;
 
-	if (sloppyfocus && !internal_call && c && !client_is_unmanaged(c))
-		focusclient(c, 0);
+/* commented out, to prevent focus-change on mouseover */
+/*	if (sloppyfocus && !internal_call && c && !client_is_unmanaged(c))
+		focusclient(c, 0);*/
 
 	/* If surface is NULL, clear pointer focus */
 	if (!surface) {
