@@ -128,6 +128,7 @@ struct Client {
 	int isfloating, isurgent, isfullscreen, isterm, noswallow, issticky;
 	uint32_t resize; /* configure serial of a pending resize */
 	pid_t pid;
+	char scratchkey;
 	Client *swallowing, *swallowedby;
 };
 
@@ -214,6 +215,7 @@ typedef struct {
 	int isterm;
 	int noswallow;
 	int monitor;
+	const char scratchkey;
 } Rule;
 
 typedef struct {
@@ -303,6 +305,7 @@ static void setpsel(struct wl_listener *listener, void *data);
 static void setsel(struct wl_listener *listener, void *data);
 static void setup(void);
 static void spawn(const Arg *arg);
+static void spawnscratch(const Arg *arg);
 static void startdrag(struct wl_listener *listener, void *data);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
@@ -310,6 +313,7 @@ static void tile(Monitor *m);
 static void togglefloating(const Arg *arg);
 static void togglesticky(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
+static void togglescratch(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
 static void unlocksession(struct wl_listener *listener, void *data);
@@ -462,6 +466,7 @@ applyrules(Client *c)
 	Monitor *mon = selmon, *m;
 
 	c->isfloating = client_is_float_type(c);
+	c->scratchkey = 0;
 	if (!(appid = client_get_appid(c)))
 		appid = broken;
 	if (!(title = client_get_title(c)))
@@ -471,6 +476,7 @@ applyrules(Client *c)
 		if ((!r->title || strstr(title, r->title))
 				&& (!r->id || strstr(appid, r->id))) {
 			c->isfloating = r->isfloating;
+			c->scratchkey = r->scratchkey;
 			c->isterm     = r->isterm;
 			c->noswallow  = r->noswallow;
 			newtags |= r->tags;
@@ -2409,6 +2415,16 @@ spawn(const Arg *arg)
 	}
 }
 
+void spawnscratch(const Arg *arg)
+{
+	if (fork() == 0) {
+		dup2(STDERR_FILENO, STDOUT_FILENO);
+		setsid();
+		execvp(((char **)arg->v)[1], ((char **)arg->v)+1);
+		die("dwl: execvp %s failed:", ((char **)arg->v)[1]);
+	}
+}
+
 void
 startdrag(struct wl_listener *listener, void *data)
 {
@@ -2500,6 +2516,29 @@ togglefullscreen(const Arg *arg)
 	Client *sel = focustop(selmon);
 	if (sel)
 		setfullscreen(sel, !sel->isfullscreen);
+}
+
+void
+togglescratch(const Arg *arg)
+{
+	Client *c;
+	unsigned int found = 0;
+
+	/* search for first window that matches the scratchkey */
+	wl_list_for_each(c, &clients, link)
+		if (c->scratchkey == ((char**)arg->v)[0][0]) {
+			found = 1;
+			break;
+		}
+
+	if (found) {
+		c->tags = VISIBLEON(c, selmon) ? 0 : selmon->tagset[selmon->seltags];
+
+		focusclient(c->tags == 0 ? focustop(selmon) : c, 1);
+		arrange(selmon);
+	} else{
+		spawnscratch(arg);
+	}
 }
 
 void
