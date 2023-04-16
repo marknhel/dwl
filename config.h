@@ -1,6 +1,7 @@
 /* appearance */
-#define TERMINAL "foot"
-#define TERMCLASS "Foot"
+#define TERMINAL "alacritty"
+#define TERMCLASS "Alacritty"
+#define MENU "bemenu"
 
 static const int sloppyfocus               = 1;  /* focus follows mouse */
 static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will disable idle tracking even if it's surface isn't visible  */
@@ -14,12 +15,12 @@ static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0};
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
-	/* app_id		title       tags mask	isfloating  isterm  noswallow  monitor	scratchkey*/
+	/* app_id		title		tags mask	isfloating	isterm		noswallow	monitor		scratchkey*/
 	/* examples:
-	{ "Gimp",		NULL,       0,		1,          0,      1,         -1 },
+	{ "Gimp",		NULL,		0,		1,		0,		1,		-1 },
 	*/
-	{ "librewolf",		NULL,       1 << 8,	0,          0,      1,         -1 },
-	{ TERMINAL,		NULL,       0,		0,          1,      0,         -1 },
+	{ "LibreWolf",		NULL,		1 << 1,		0,		0,		1,		-1 },
+	{ TERMCLASS,		NULL,		0,		0,		1,		0,		-1 },
 };
 
 /* layout(s) */
@@ -112,7 +113,9 @@ static const char *menucmd[] = { "bemenu-run", NULL };
 //static const char *menucmd[] = { "dmenu-wl_run", "-fn", "monospace", "-nb", "#080808","-nf", "#f9f5d67","-sb","#202020","-sf","#f9f5d7", NULL };
 
 /* named scratchpads - First arg only serves to match against key in rules*/
-static const char *spterm[] = { "s", TERMINAL, "-t", "scratchpad", NULL };
+//static const char *spterm[] = { "s", TERMINAL, "-t", "scratchpad", "-w", "120x34", NULL };
+static const char *scratchpadcmd[] = { "s", TERMINAL, "-t", "scratchpad", "-w", "120x34", NULL };
+//const char *spterm[] = {TERMINAL, "-n", "spterm", "-g", "120x34", NULL };
 
 
 
@@ -136,7 +139,7 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT,	XKB_KEY_T,		setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,			XKB_KEY_y,		setlayout,      {.v = &layouts[2]} },
 
-	{ MODKEY|WLR_MODIFIER_SHIFT,	XKB_KEY_X,		togglescratch,  {.v = spterm } },
+//	{ MODKEY|WLR_MODIFIER_SHIFT,	XKB_KEY_X,		togglescratch,  {.v = scratchpadcmd } },
 //	{ MODKEY,			XKB_KEY_space,		setlayout,      {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,	XKB_KEY_Return,		togglefloating, {0} },
 	{ MODKEY,			XKB_KEY_f,		togglefullscreen,{0} },
@@ -154,7 +157,7 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT,	XKB_KEY_B,		spawn,		SHCMD("wtype $(grep -v '^#'  ~/.config/bookmarks | bemenu -i -l 10 | cut -d' ' -f1)") },
 	{ MODKEY|WLR_MODIFIER_SHIFT,	XKB_KEY_S,		spawn,		SHCMD("togglesk") },
 //	{ MODKEY|WLR_MODIFIER_SHIFT,	XKB_KEY_s,		spawn,		SHCMD("sysact") },
-	{ MODKEY,			XKB_KEY_w,		spawn,		SHCMD("librewolf") },
+	{ MODKEY,			XKB_KEY_w,		spawn,		SHCMD("chromium --enable-features=UseOzonePlatform --ozone-platform=wayland") },
 	{ MODKEY|WLR_MODIFIER_SHIFT,	XKB_KEY_W,		spawn,		SHCMD("watchyt") },
 	{ MODKEY,			XKB_KEY_e,		spawn,		SHCMD(TERMINAL " -e lf ~/") },
 	{ MODKEY|WLR_MODIFIER_SHIFT,	XKB_KEY_W,		spawn,		SHCMD(TERMINAL " -e thunar ~/") },
