@@ -19,7 +19,7 @@ static const Rule rules[] = {
 	/* examples:
 	{ "Gimp",		NULL,		0,		1,		0,		1,		-1 },
 	*/
-	{ "LibreWolf",		NULL,		1 << 1,		0,		0,		1,		-1 },
+	{ "Chromium",		NULL,		1 << 1,		0,		0,		1,		-1 },
 	{ TERMCLASS,		NULL,		0,		0,		1,		0,		-1 },
 };
 
